@@ -3,251 +3,1022 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Guild3D</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
-
 <style>
-
-:root{
---bg:#0d0f1a;
---surface:#13162a;
---border:#2a2f52;
---gold:#f0b429;
---text:#e2e8f0;
+:root {
+--bg: #0d0f1a;
+--surface: #13162a;
+--surface2: #1a1e35;
+--border: #2a2f52;
+--gold: #f0b429;
+--gold2: #ffd700;
+--teal: #2dd4bf;
+--purple: #a78bfa;
+--red: #f87171;
+--green: #4ade80;
+--text: #e2e8f0;
+--muted: #64748b;
+--card-shadow: 0 4px 24px rgba(0,0,0,0.4);
 }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+font-family: 'Outfit', sans-serif;
+background: var(--bg);
+color: var(--text);
+min-height: 100vh;
+overflow-x: hidden;
 }
 
-body{
-font-family:'Outfit',sans-serif;
-background:var(--bg);
-color:var(--text);
-padding:40px;
+/* Background stars */
+body::before {
+content: '';
+position: fixed;
+inset: 0;
+background-image:
+radial-gradient(1px 1px at 20% 30%, rgba(240,180,41,0.4) 0%, transparent 100%),
+radial-gradient(1px 1px at 80% 10%, rgba(167,139,250,0.3) 0%, transparent 100%),
+radial-gradient(1px 1px at 50% 60%, rgba(45,212,191,0.2) 0%, transparent 100%),
+radial-gradient(1px 1px at 10% 80%, rgba(240,180,41,0.2) 0%, transparent 100%),
+radial-gradient(1px 1px at 90% 70%, rgba(167,139,250,0.2) 0%, transparent 100%);
+pointer-events: none;
+z-index: 0;
 }
 
-h1{
-font-family:'Cinzel',serif;
-margin-bottom:30px;
-color:var(--gold);
+/* ===== HEADER ===== */
+header {
+position: sticky;
+top: 0;
+z-index: 100;
+background: rgba(13,15,26,0.85);
+backdrop-filter: blur(16px);
+border-bottom: 1px solid var(--border);
+padding: 0 24px;
+height: 64px;
+display: flex;
+align-items: center;
+justify-content: space-between;
 }
 
-.panel{
-background:var(--surface);
-border:1px solid var(--border);
-padding:20px;
-border-radius:10px;
-margin-bottom:20px;
+.logo {
+display: flex;
+align-items: center;
+gap: 10px;
 }
 
-input,select,button{
-padding:10px;
-border-radius:6px;
-border:1px solid var(--border);
-background:#1a1e35;
-color:white;
-margin-right:10px;
+.logo-icon {
+width: 36px;
+height: 36px;
+background: linear-gradient(135deg, var(--gold), var(--purple));
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 18px;
 }
 
-button{
-cursor:pointer;
-background:var(--gold);
-color:black;
-border:none;
+.logo-text {
+font-family: 'Cinzel', serif;
+font-size: 20px;
+font-weight: 700;
+background: linear-gradient(135deg, var(--gold), var(--gold2));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+letter-spacing: 1px;
 }
 
-.task{
-background:#13162a;
-border:1px solid #2a2f52;
-padding:10px;
-margin-top:10px;
-border-radius:6px;
-display:flex;
-justify-content:space-between;
-align-items:center;
+.year-badge {
+background: linear-gradient(135deg, rgba(240,180,41,0.15), rgba(167,139,250,0.15));
+border: 1px solid var(--border);
+border-radius: 20px;
+padding: 6px 16px;
+font-size: 13px;
+color: var(--gold);
+font-weight: 500;
 }
 
+/* ===== LAYOUT ===== */
+.container {
+max-width: 1200px;
+margin: 0 auto;
+padding: 32px 24px;
+position: relative;
+z-index: 1;
+}
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+font-family: 'Cinzel', serif;
+font-size: 13px;
+letter-spacing: 3px;
+color: var(--muted);
+text-transform: uppercase;
+margin-bottom: 16px;
+}
+
+/* ===== STATS ROW ===== */
+.stats-row {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 16px;
+margin-bottom: 32px;
+}
+
+.stat-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 16px;
+padding: 20px;
+position: relative;
+overflow: hidden;
+transition: transform 0.2s, border-color 0.2s;
+}
+
+.stat-card:hover { transform: translateY(-2px); border-color: rgba(240,180,41,0.3); }
+
+.stat-card::before {
+content: '';
+position: absolute;
+top: 0; right: 0;
+width: 80px; height: 80px;
+border-radius: 50%;
+opacity: 0.06;
+transform: translate(20px, -20px);
+}
+
+.stat-card.gold::before { background: var(--gold); }
+.stat-card.teal::before { background: var(--teal); }
+.stat-card.purple::before { background: var(--purple); }
+.stat-card.green::before { background: var(--green); }
+
+.stat-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.stat-value { font-size: 28px; font-weight: 600; line-height: 1; }
+.stat-card.gold .stat-value { color: var(--gold); }
+.stat-card.teal .stat-value { color: var(--teal); }
+.stat-card.purple .stat-value { color: var(--purple); }
+.stat-card.green .stat-value { color: var(--green); }
+
+/* ===== MAIN GRID ===== */
+.main-grid {
+display: grid;
+grid-template-columns: 1fr 360px;
+gap: 24px;
+margin-bottom: 32px;
+}
+
+/* ===== ADD TASK PANEL ===== */
+.panel {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 20px;
+padding: 24px;
+}
+
+.panel-title {
+font-family: 'Cinzel', serif;
+font-size: 16px;
+color: var(--gold);
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.form-group { margin-bottom: 16px; }
+
+label {
+display: block;
+font-size: 12px;
+color: var(--muted);
+margin-bottom: 6px;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+}
+
+input, select, textarea {
+width: 100%;
+background: var(--surface2);
+border: 1px solid var(--border);
+border-radius: 10px;
+padding: 10px 14px;
+color: var(--text);
+font-family: 'Outfit', sans-serif;
+font-size: 14px;
+outline: none;
+transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+border-color: var(--gold);
+box-shadow: 0 0 0 3px rgba(240,180,41,0.1);
+}
+
+textarea { resize: vertical; min-height: 72px; }
+
+select option { background: var(--surface2); }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.btn-primary {
+width: 100%;
+padding: 12px;
+background: linear-gradient(135deg, var(--gold), #e09f00);
+border: none;
+border-radius: 10px;
+color: #0d0f1a;
+font-family: 'Cinzel', serif;
+font-size: 14px;
+font-weight: 700;
+letter-spacing: 1px;
+cursor: pointer;
+transition: all 0.2s;
+margin-top: 4px;
+}
+
+.btn-primary:hover {
+transform: translateY(-1px);
+box-shadow: 0 4px 16px rgba(240,180,41,0.3);
+}
+
+/* ===== MEMBER CARDS ===== */
+.members-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 16px;
+margin-bottom: 32px;
+}
+
+.member-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 16px;
+padding: 20px;
+cursor: pointer;
+transition: all 0.2s;
+position: relative;
+overflow: hidden;
+}
+
+.member-card:hover { transform: translateY(-3px); border-color: rgba(240,180,41,0.4); }
+.member-card.active { border-color: var(--gold); background: rgba(240,180,41,0.05); }
+
+.member-card::after {
+content: '';
+position: absolute;
+bottom: 0; left: 0; right: 0;
+height: 2px;
+background: linear-gradient(90deg, var(--gold), var(--purple));
+transform: scaleX(0);
+transition: transform 0.3s;
+}
+
+.member-card:hover::after, .member-card.active::after { transform: scaleX(1); }
+
+.member-top {
+display: flex;
+align-items: center;
+gap: 12px;
+margin-bottom: 14px;
+}
+
+.avatar {
+width: 44px;
+height: 44px;
+border-radius: 12px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 20px;
+font-weight: 700;
+flex-shrink: 0;
+font-family: 'Cinzel', serif;
+}
+
+.member-info { flex: 1; min-width: 0; }
+.member-name { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.member-role { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+.level-badge {
+background: linear-gradient(135deg, rgba(240,180,41,0.2), rgba(167,139,250,0.2));
+border: 1px solid rgba(240,180,41,0.3);
+border-radius: 8px;
+padding: 3px 8px;
+font-size: 11px;
+color: var(--gold);
+font-weight: 600;
+}
+
+.exp-bar-wrap { margin-bottom: 12px; }
+.exp-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+
+.exp-bar {
+height: 6px;
+background: var(--surface2);
+border-radius: 999px;
+overflow: hidden;
+}
+
+.exp-fill {
+height: 100%;
+border-radius: 999px;
+background: linear-gradient(90deg, var(--gold), var(--purple));
+transition: width 0.6s ease;
+}
+
+.member-stats {
+display: flex;
+gap: 12px;
+font-size: 12px;
+}
+
+.mstat { color: var(--muted); }
+.mstat span { color: var(--text); font-weight: 600; }
+
+/* ===== TASK LIST ===== */
+.tasks-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 16px;
+}
+
+.filter-tabs {
+display: flex;
+gap: 6px;
+}
+
+.filter-tab {
+padding: 6px 14px;
+border-radius: 20px;
+font-size: 12px;
+cursor: pointer;
+border: 1px solid var(--border);
+background: transparent;
+color: var(--muted);
+transition: all 0.2s;
+}
+
+.filter-tab.active {
+background: rgba(240,180,41,0.15);
+border-color: rgba(240,180,41,0.4);
+color: var(--gold);
+}
+
+.task-list { display: flex; flex-direction: column; gap: 10px; }
+
+.task-item {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 14px;
+padding: 16px;
+display: flex;
+align-items: center;
+gap: 14px;
+transition: all 0.2s;
+animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+from { opacity: 0; transform: translateY(-8px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.task-item:hover { border-color: rgba(240,180,41,0.2); }
+
+.task-check {
+width: 22px;
+height: 22px;
+border-radius: 6px;
+border: 2px solid var(--border);
+cursor: pointer;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 0.2s;
+}
+
+.task-check:hover { border-color: var(--gold); }
+.task-check.done { background: var(--gold); border-color: var(--gold); color: #0d0f1a; font-size: 12px; }
+
+.task-body { flex: 1; min-width: 0; }
+.task-name { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.task-name.done { text-decoration: line-through; color: var(--muted); }
+
+.task-meta { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--muted); flex-wrap: wrap; }
+
+.task-assignee {
+display: flex;
+align-items: center;
+gap: 4px;
+}
+
+.mini-avatar {
+width: 18px;
+height: 18px;
+border-radius: 4px;
+font-size: 9px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 700;
+font-family: 'Cinzel', serif;
+}
+
+.tag {
+padding: 2px 8px;
+border-radius: 4px;
+font-size: 10px;
+font-weight: 600;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+}
+
+.tag-easy { background: rgba(74,222,128,0.15); color: var(--green); }
+.tag-medium { background: rgba(240,180,41,0.15); color: var(--gold); }
+.tag-hard { background: rgba(248,113,113,0.15); color: var(--red); }
+
+.task-exp {
+font-size: 12px;
+font-weight: 600;
+color: var(--purple);
+white-space: nowrap;
+}
+
+.task-delete {
+width: 28px;
+height: 28px;
+border-radius: 8px;
+border: none;
+background: transparent;
+color: var(--muted);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 0.2s;
+font-size: 14px;
+}
+
+.task-delete:hover { background: rgba(248,113,113,0.15); color: var(--red); }
+
+/* ===== LEADERBOARD ===== */
+.lb-item {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 12px;
+border-radius: 12px;
+transition: background 0.2s;
+margin-bottom: 6px;
+}
+
+.lb-item:hover { background: rgba(255,255,255,0.03); }
+
+.lb-rank {
+width: 24px;
+font-size: 13px;
+font-weight: 700;
+text-align: center;
+}
+
+.lb-rank.r1 { color: var(--gold); }
+.lb-rank.r2 { color: #94a3b8; }
+.lb-rank.r3 { color: #b45309; }
+
+.lb-avatar { width: 36px; height: 36px; border-radius: 10px; font-size: 16px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: 'Cinzel', serif; }
+
+.lb-info { flex: 1; }
+.lb-name { font-size: 14px; font-weight: 500; }
+.lb-tasks { font-size: 11px; color: var(--muted); }
+
+.lb-count {
+font-size: 20px;
+font-weight: 700;
+color: var(--gold);
+}
+
+/* ===== TOAST ===== */
+.toast {
+position: fixed;
+bottom: 24px;
+right: 24px;
+background: var(--surface);
+border: 1px solid rgba(74,222,128,0.4);
+border-radius: 12px;
+padding: 14px 20px;
+font-size: 14px;
+color: var(--green);
+z-index: 1000;
+transform: translateX(120%);
+transition: transform 0.3s ease;
+box-shadow: var(--card-shadow);
+}
+
+.toast.show { transform: translateX(0); }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.7);
+backdrop-filter: blur(4px);
+z-index: 200;
+display: none;
+align-items: center;
+justify-content: center;
+}
+
+.modal-overlay.show { display: flex; }
+
+.modal {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: 20px;
+padding: 32px;
+width: 90%;
+max-width: 480px;
+max-height: 80vh;
+overflow-y: auto;
+}
+
+.modal h2 {
+font-family: 'Cinzel', serif;
+color: var(--gold);
+margin-bottom: 20px;
+}
+
+.month-row {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 10px 0;
+border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.month-name { width: 80px; font-size: 13px; color: var(--muted); }
+.month-bar-wrap { flex: 1; height: 8px; background: var(--surface2); border-radius: 999px; overflow: hidden; }
+.month-bar { height: 100%; background: linear-gradient(90deg, var(--teal), var(--purple)); border-radius: 999px; transition: width 0.8s; }
+.month-count { font-size: 13px; font-weight: 600; color: var(--text); width: 30px; text-align: right; }
+
+.btn-close {
+margin-top: 20px;
+padding: 10px 24px;
+background: var(--surface2);
+border: 1px solid var(--border);
+border-radius: 10px;
+color: var(--text);
+cursor: pointer;
+font-family: 'Outfit', sans-serif;
+font-size: 14px;
+transition: border-color 0.2s;
+}
+
+.btn-close:hover { border-color: var(--gold); color: var(--gold); }
+
+.empty-state {
+text-align: center;
+padding: 40px;
+color: var(--muted);
+font-size: 14px;
+}
+
+.empty-state .icon { font-size: 32px; margin-bottom: 12px; }
+
+@media (max-width: 900px) {
+.main-grid { grid-template-columns: 1fr; }
+.stats-row { grid-template-columns: repeat(2,1fr); }
+.members-grid { grid-template-columns: repeat(2,1fr); }
+}
+
+@media (max-width: 600px) {
+.members-grid { grid-template-columns: 1fr; }
+.stats-row { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
-
 <body>
 
-<h1>⚔ Guild3D Task Board</h1>
+<header>
+<div class="logo">
+<div class="logo-icon">⚔️</div>
+<span class="logo-text">GUILD3D</span>
+</div>
+<div class="year-badge" id="yearBadge">📅 2025</div>
+</header>
 
-<div class="panel">
+<div class="container">
 
-<input id="taskName" placeholder="ชื่องาน">
-
-<select id="taskAssignee">
-<option value="suang">suang</option>
-<option value="pran">pran</option>
-<option value="pangpond">pangpond</option>
-<option value="fiw">fiw</option>
-<option value="beck">beck</option>
-<option value="wut">wut</option>
-</select>
-
-<select id="taskDiff">
-<option value="easy">Easy</option>
-<option value="medium">Medium</option>
-<option value="hard">Hard</option>
-</select>
-
-<button onclick="addTask()">เพิ่มงาน</button>
-
+<!-- STATS -->
+<div class="stats-row">
+<div class="stat-card gold">
+<div class="stat-label">งานทั้งหมด</div>
+<div class="stat-value" id="statTotal">0</div>
+</div>
+<div class="stat-card green">
+<div class="stat-label">เสร็จแล้ว</div>
+<div class="stat-value" id="statDone">0</div>
+</div>
+<div class="stat-card teal">
+<div class="stat-label">กำลังทำ</div>
+<div class="stat-value" id="statPending">0</div>
+</div>
+<div class="stat-card purple">
+<div class="stat-label">EXP รวมทีม</div>
+<div class="stat-value" id="statExp">0</div>
+</div>
 </div>
 
-<div id="taskList"></div>
+<!-- MEMBER CARDS -->
+<div class="section-title">⚔ Members of the Guild</div>
+<div class="members-grid" id="membersGrid"></div>
 
+<!-- MAIN GRID -->
+<div class="main-grid">
+<!-- LEFT: TASK LIST -->
+<div>
+<div class="tasks-header">
+<div class="section-title" style="margin-bottom:0">📜 Quest Log</div>
+<div class="filter-tabs">
+<button class="filter-tab active" onclick="setFilter('all', this)">ทั้งหมด</button>
+<button class="filter-tab" onclick="setFilter('pending', this)">กำลังทำ</button>
+<button class="filter-tab" onclick="setFilter('done', this)">เสร็จแล้ว</button>
+</div>
+</div>
+<div class="task-list" id="taskList"></div>
+</div>
+
+<!-- RIGHT: ADD TASK + LEADERBOARD -->
+<div style="display:flex;flex-direction:column;gap:20px;">
+<!-- ADD TASK -->
+<div class="panel">
+<div class="panel-title">✨ เพิ่มงานใหม่</div>
+<div class="form-group">
+<label>ชื่องาน</label>
+<input type="text" id="taskName" placeholder="เช่น Model character A..." />
+</div>
+<div class="form-row">
+<div class="form-group">
+<label>มอบหมายให้</label>
+<select id="taskAssignee"></select>
+</div>
+<div class="form-group">
+<label>ระดับความยาก</label>
+<select id="taskDiff">
+<option value="easy">🟢 Easy (+50 EXP)</option>
+<option value="medium" selected>🟡 Medium (+100 EXP)</option>
+<option value="hard">🔴 Hard (+200 EXP)</option>
+</select>
+</div>
+</div>
+<div class="form-group">
+<label>วันที่กำหนดส่ง</label>
+<input type="date" id="taskDate" />
+</div>
+<div class="form-group">
+<label>หมายเหตุ (ถ้ามี)</label>
+<textarea id="taskNote" placeholder="รายละเอียดเพิ่มเติม..."></textarea>
+</div>
+<button class="btn-primary" onclick="addTask()">⚡ เพิ่มภารกิจ</button>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="panel">
+<div class="panel-title" style="justify-content:space-between">
+<span>🏆 Leaderboard</span>
+<button onclick="showYearReport()" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.3);color:var(--gold);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;">ดูรายงาน</button>
+</div>
+<div id="leaderboard"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✅ เพิ่มภารกิจแล้ว!</div>
+
+<!-- YEAR REPORT MODAL -->
+<div class="modal-overlay" id="reportModal">
+<div class="modal">
+<h2>📊 รายงานประจำปี <span id="reportYear"></span></h2>
+<div id="reportContent"></div>
+<button class="btn-close" onclick="closeModal()">ปิด</button>
+</div>
+</div>
 
 <script>
+// ===== DATA =====
+const MEMBERS = [
+{ id: 1, name: 'Suang', role: '3D General', emoji: 'S', color: '#f0b429', bg: 'rgba(240,180,41,0.15)' },
+{ id: 2, name: 'Pran', role: '3D General', emoji: 'P', color: '#2dd4bf', bg: 'rgba(45,212,191,0.15)' },
+{ id: 3, name: 'Pangpond', role: '3D General', emoji: 'Pa', color: '#a78bfa', bg: 'rgba(167,139,250,0.15)' },
+{ id: 4, name: 'Fiw', role: '3D General', emoji: 'F', color: '#f87171', bg: 'rgba(248,113,113,0.15)' },
+{ id: 5, name: 'Beck', role: '3D General', emoji: 'B', color: '#4ade80', bg: 'rgba(74,222,128,0.15)' },
+{ id: 6, name: 'Wut', role: '3D General', emoji: 'W', color: '#fb923c', bg: 'rgba(251,146,60,0.15)' },
+];
 
-// ===== WEBHOOK =====
+const EXP_MAP = { easy: 50, medium: 100, hard: 200 };
+const EXP_PER_LEVEL = 500;
 
-const GET_TASKS = "https://pb-n8n.planbmedia.co.th/webhook/guild3d/get-tasks"
+const N8N_ADD_TASK = 'https://pb-n8n.planbmedia.co.th/webhook/guild3d/add-task';
+const N8N_COMPLETE_TASK = 'https://pb-n8n.planbmedia.co.th/webhook/guild3d/complete-task';
+const N8N_DELETE_TASK = 'https://pb-n8n.planbmedia.co.th/webhook/guild3d/delete-task';
+const N8N_GET_TASKS = 'https://pb-n8n.planbmedia.co.th/webhook/guild3d/get-tasks';
 
-const ADD_TASK = "https://pb-n8n.planbmedia.co.th/webhook/guild3d/add-task"
+let tasks = [];
+let filterMode = 'all';
+let selectedMember = null;
 
-const COMPLETE_TASK = "https://pb-n8n.planbmedia.co.th/webhook/guild3d/complete-task"
-
-
-
-let tasks=[]
-
-
-// ===== โหลดงาน =====
-
-async function loadTasks(){
-
-try{
-
-const res = await fetch(GET_TASKS)
-
-const data = await res.json()
-
-tasks = data.tasks || []
-
-render()
-
-}catch(e){
-
-console.log("โหลดงานไม่ได้",e)
-
+async function loadTasks() {
+try {
+showToast('⏳ กำลังโหลดข้อมูล...', '#a78bfa');
+const res = await fetch(N8N_GET_TASKS);
+const data = await res.json();
+tasks = data.tasks || [];
+renderAll();
+} catch (e) {
+showToast('⚠️ โหลดข้อมูลไม่ได้ ตรวจสอบ n8n', '#f87171');
+}
 }
 
+// ===== INIT =====
+function init() {
+document.getElementById('yearBadge').textContent = `📅 ${new Date().getFullYear()}`;
+document.getElementById('reportYear').textContent = new Date().getFullYear();
+
+// Set today as default date
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('taskDate').value = today;
+
+// Populate assignee select
+const sel = document.getElementById('taskAssignee');
+MEMBERS.forEach(m => {
+const opt = document.createElement('option');
+opt.value = m.id;
+opt.textContent = m.name;
+sel.appendChild(opt);
+});
+
+loadTasks();
 }
 
-
-
-// ===== แสดงรายการ =====
-
-function render(){
-
-const list = document.getElementById("taskList")
-
-list.innerHTML=""
-
-tasks.forEach(t=>{
-
-const div=document.createElement("div")
-
-div.className="task"
-
-div.innerHTML=`
-<span>${t.name} - ${t.assigneeName}</span>
-<button onclick="completeTask(${t.id})">เสร็จ</button>
-`
-
-list.appendChild(div)
-
-})
-
+// ===== RENDER =====
+function renderAll() {
+renderMembers();
+renderTasks();
+renderLeaderboard();
+renderStats();
 }
 
-
-
-// ===== เพิ่มงาน =====
-
-async function addTask(){
-
-const name=document.getElementById("taskName").value
-
-const assignee=document.getElementById("taskAssignee").value
-
-const diff=document.getElementById("taskDiff").value
-
-const task={
-
-id:Date.now(),
-
-name:name,
-
-assigneeName:assignee,
-
-difficulty:diff,
-
-done:false
-
+function getMemberData(id) {
+const memberTasks = tasks.filter(t => t.assigneeId == id);
+const doneTasks = memberTasks.filter(t => t.done);
+const totalExp = doneTasks.reduce((s, t) => s + EXP_MAP[t.difficulty], 0);
+const level = Math.floor(totalExp / EXP_PER_LEVEL) + 1;
+const expInLevel = totalExp % EXP_PER_LEVEL;
+const expPercent = (expInLevel / EXP_PER_LEVEL) * 100;
+return { total: memberTasks.length, done: doneTasks.length, totalExp, level, expInLevel, expPercent };
 }
 
-await fetch(ADD_TASK,{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify(task)
-
-})
-
-loadTasks()
-
+function renderMembers() {
+const grid = document.getElementById('membersGrid');
+grid.innerHTML = '';
+MEMBERS.forEach(m => {
+const d = getMemberData(m.id);
+const isActive = selectedMember === m.id;
+const div = document.createElement('div');
+div.className = `member-card${isActive ? ' active' : ''}`;
+div.onclick = () => { selectedMember = selectedMember === m.id ? null : m.id; renderAll(); };
+div.innerHTML = `
+<div class="member-top">
+<div class="avatar" style="background:${m.bg};color:${m.color}">${m.emoji}</div>
+<div class="member-info">
+<div class="member-name">${m.name}</div>
+<div class="member-role">${m.role}</div>
+</div>
+<div class="level-badge">Lv.${d.level}</div>
+</div>
+<div class="exp-bar-wrap">
+<div class="exp-label">
+<span>EXP</span>
+<span>${d.expInLevel} / ${EXP_PER_LEVEL}</span>
+</div>
+<div class="exp-bar"><div class="exp-fill" style="width:${d.expPercent}%"></div></div>
+</div>
+<div class="member-stats">
+<div class="mstat">งานทำ <span>${d.done}</span></div>
+<div class="mstat">•</div>
+<div class="mstat">EXP <span>${d.totalExp}</span></div>
+</div>
+`;
+grid.appendChild(div);
+});
 }
 
+function renderTasks() {
+const list = document.getElementById('taskList');
+let filtered = [...tasks].reverse();
+if (selectedMember) filtered = filtered.filter(t => t.assigneeId == selectedMember);
+if (filterMode === 'done') filtered = filtered.filter(t => t.done);
+if (filterMode === 'pending') filtered = filtered.filter(t => !t.done);
 
-
-// ===== ทำงานเสร็จ =====
-
-async function completeTask(id){
-
-await fetch(COMPLETE_TASK,{
-
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json"
-
-},
-
-body:JSON.stringify({
-
-taskId:id
-
-})
-
-})
-
-loadTasks()
-
+if (filtered.length === 0) {
+list.innerHTML = `<div class="empty-state"><div class="icon">🗡️</div><div>ยังไม่มีภารกิจ${selectedMember ? 'สำหรับสมาชิกนี้' : ''}</div></div>`;
+return;
 }
 
+list.innerHTML = '';
+filtered.forEach(task => {
+const m = MEMBERS.find(x => x.id == task.assigneeId);
+const div = document.createElement('div');
+div.className = 'task-item';
+div.innerHTML = `
+<div class="task-check ${task.done ? 'done' : ''}" onclick="toggleTask(${task.id})">
+${task.done ? '✓' : ''}
+</div>
+<div class="task-body">
+<div class="task-name ${task.done ? 'done' : ''}">${task.name}</div>
+<div class="task-meta">
+<div class="task-assignee">
+<div class="mini-avatar" style="background:${m.bg};color:${m.color}">${m.emoji}</div>
+${m.name}
+</div>
+<span class="tag tag-${task.difficulty}">${task.difficulty}</span>
+${task.date ? `<span>📅 ${task.date}</span>` : ''}
+${task.note ? `<span>📝 ${task.note.substring(0,30)}${task.note.length>30?'...':''}</span>` : ''}
+</div>
+</div>
+<div class="task-exp">+${EXP_MAP[task.difficulty]} EXP</div>
+<button class="task-delete" onclick="deleteTask(${task.id})">✕</button>
+`;
+list.appendChild(div);
+});
+}
 
+function renderLeaderboard() {
+const lb = document.getElementById('leaderboard');
+const sorted = [...MEMBERS].map(m => ({ ...m, done: getMemberData(m.id).done }))
+.sort((a, b) => b.done - a.done);
 
-// ===== เริ่มระบบ =====
+lb.innerHTML = '';
+sorted.forEach((m, i) => {
+const rankClass = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : '';
+const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1;
+lb.innerHTML += `
+<div class="lb-item">
+<div class="lb-rank ${rankClass}">${medal}</div>
+<div class="lb-avatar" style="background:${m.bg};color:${m.color}">${m.emoji}</div>
+<div class="lb-info">
+<div class="lb-name">${m.name}</div>
+<div class="lb-tasks">${m.role}</div>
+</div>
+<div class="lb-count">${m.done}</div>
+</div>
+`;
+});
+}
 
-loadTasks()
+function renderStats() {
+const total = tasks.length;
+const done = tasks.filter(t => t.done).length;
+const totalExp = tasks.filter(t => t.done).reduce((s, t) => s + EXP_MAP[t.difficulty], 0);
+document.getElementById('statTotal').textContent = total;
+document.getElementById('statDone').textContent = done;
+document.getElementById('statPending').textContent = total - done;
+document.getElementById('statExp').textContent = totalExp;
+}
 
+// ===== ACTIONS =====
+async function addTask() {
+const name = document.getElementById('taskName').value.trim();
+if (!name) { showToast('⚠️ กรุณากรอกชื่องาน', '#f87171'); return; }
+const assigneeId = parseInt(document.getElementById('taskAssignee').value);
+const member = MEMBERS.find(m => m.id === assigneeId);
+const task = {
+id: Date.now(),
+name,
+assigneeId,
+assigneeName: member ? member.name : '',
+difficulty: document.getElementById('taskDiff').value,
+date: document.getElementById('taskDate').value,
+note: document.getElementById('taskNote').value.trim(),
+done: false,
+createdAt: new Date().toISOString(),
+};
+try {
+await fetch(N8N_ADD_TASK, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(task)
+});
+document.getElementById('taskName').value = '';
+document.getElementById('taskNote').value = '';
+showToast('✅ เพิ่มภารกิจสำเร็จ!');
+await loadTasks();
+} catch (e) {
+showToast('⚠️ เพิ่มงานไม่สำเร็จ ตรวจสอบ n8n', '#f87171');
+}
+}
+
+async function toggleTask(id) {
+const t = tasks.find(x => x.id === id);
+if (!t || t.done) return;
+try {
+await fetch(N8N_COMPLETE_TASK, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ taskId: id })
+});
+showToast(`⚔️ ภารกิจเสร็จสิ้น! +${EXP_MAP[t.difficulty]} EXP`);
+await loadTasks();
+} catch (e) {
+showToast('⚠️ อัปเดตไม่สำเร็จ ตรวจสอบ n8n', '#f87171');
+}
+}
+
+async function deleteTask(id) {
+try {
+await fetch(N8N_DELETE_TASK, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ taskId: id })
+});
+await loadTasks();
+} catch (e) {
+showToast('⚠️ ลบไม่สำเร็จ ตรวจสอบ n8n', '#f87171');
+}
+}
+
+function setFilter(mode, btn) {
+filterMode = mode;
+document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+renderTasks();
+}
+
+// ===== YEAR REPORT =====
+function showYearReport() {
+const year = new Date().getFullYear();
+const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const counts = Array(12).fill(0);
+tasks.filter(t => t.done && t.completedAt).forEach(t => {
+const d = new Date(t.completedAt);
+if (d.getFullYear() === year) counts[d.getMonth()]++;
+});
+const max = Math.max(...counts, 1);
+
+let html = `<div style="margin-bottom:16px;font-size:13px;color:var(--muted)">งานที่เสร็จแต่ละเดือน ปี ${year}</div>`;
+months.forEach((m, i) => {
+html += `<div class="month-row">
+<div class="month-name">${m}</div>
+<div class="month-bar-wrap"><div class="month-bar" style="width:${(counts[i]/max)*100}%"></div></div>
+<div class="month-count">${counts[i]}</div>
+</div>`;
+});
+
+// Member summary
+html += `<div style="margin-top:20px;font-size:13px;color:var(--muted);margin-bottom:12px">สรุปรายคน</div>`;
+const memberSummary = MEMBERS.map(m => {
+const done = tasks.filter(t => t.done && t.assigneeId == m.id).length;
+const exp = tasks.filter(t => t.done && t.assigneeId == m.id).reduce((s,t)=>s+EXP_MAP[t.difficulty],0);
+return { ...m, done, exp };
+}).sort((a,b) => b.done - a.done);
+
+memberSummary.forEach(m => {
+html += `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+<div style="width:32px;height:32px;border-radius:8px;background:${m.bg};color:${m.color};display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Cinzel',serif;font-size:14px">${m.emoji}</div>
+<div style="flex:1"><div style="font-size:14px">${m.name}</div><div style="font-size:11px;color:var(--muted)">${m.role}</div></div>
+<div style="text-align:right"><div style="font-size:15px;font-weight:600;color:var(--gold)">${m.done} งาน</div><div style="font-size:11px;color:var(--purple)">${m.exp} EXP</div></div>
+</div>`;
+});
+
+document.getElementById('reportContent').innerHTML = html;
+document.getElementById('reportModal').classList.add('show');
+}
+
+function closeModal() {
+document.getElementById('reportModal').classList.remove('show');
+}
+
+document.getElementById('reportModal').addEventListener('click', e => {
+if (e.target === document.getElementById('reportModal')) closeModal();
+});
+
+// ===== TOAST =====
+let toastTimer;
+function showToast(msg, color = '#4ade80') {
+const t = document.getElementById('toast');
+t.textContent = msg;
+t.style.color = color;
+t.style.borderColor = color + '66';
+t.classList.add('show');
+clearTimeout(toastTimer);
+toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+init();
 </script>
-
 </body>
 </html>
