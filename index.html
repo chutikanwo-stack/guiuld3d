@@ -754,7 +754,7 @@ async function loadTasks() {
         createdAt: t.createdAt || t['createdAt'] || '',
         completedAt: t.completedAt || t['completedAt'] || ''
       };
-    }).filter(t => t.name);
+    }).filter(t => t.name && t.status !== 'deleted');
     renderAll();
   } catch (e) {
     showToast('⚠️ โหลดข้อมูลไม่ได้ ตรวจสอบ n8n', '#f87171');
@@ -981,13 +981,22 @@ function setFilter(mode, btn) {
 
 // ===== YEAR REPORT =====
 function showYearReport() {
-  const year = new Date().getFullYear();
+  const now = new Date();
+  const year = now.getFullYear();
   const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
   const counts = Array(12).fill(0);
-  tasks.filter(t => t.done && t.completedAt).forEach(t => {
-    const d = new Date(t.completedAt);
-    if (d.getFullYear() === year) counts[d.getMonth()]++;
+
+  tasks.filter(t => t.done).forEach(t => {
+    // Try completedAt first, fall back to createdAt
+    const dateStr = t.completedAt || t.createdAt || '';
+    if (!dateStr) return;
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return;
+    // Convert UTC to Bangkok time (UTC+7)
+    const bkkTime = new Date(d.getTime() + 7 * 60 * 60 * 1000);
+    if (bkkTime.getUTCFullYear() === year) counts[bkkTime.getUTCMonth()]++;
   });
+
   const max = Math.max(...counts, 1);
 
   let html = `<div style="margin-bottom:16px;font-size:13px;color:var(--muted)">งานที่เสร็จแต่ละเดือน ปี ${year}</div>`;
