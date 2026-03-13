@@ -519,64 +519,7 @@
 
   .toast.show { transform: translateX(0); }
 
-  /* ===== MODAL ===== */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(4px);
-    z-index: 200;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
 
-  .modal-overlay.show { display: flex; }
-
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px;
-    width: 90%;
-    max-width: 480px;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-
-  .modal h2 {
-    font-family: 'Cinzel', serif;
-    color: var(--gold);
-    margin-bottom: 20px;
-  }
-
-  .month-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-  }
-
-  .month-name { width: 80px; font-size: 13px; color: var(--muted); }
-  .month-bar-wrap { flex: 1; height: 8px; background: var(--surface2); border-radius: 999px; overflow: hidden; }
-  .month-bar { height: 100%; background: linear-gradient(90deg, var(--teal), var(--purple)); border-radius: 999px; transition: width 0.8s; }
-  .month-count { font-size: 13px; font-weight: 600; color: var(--text); width: 30px; text-align: right; }
-
-  .btn-close {
-    margin-top: 20px;
-    padding: 10px 24px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    cursor: pointer;
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-    transition: border-color 0.2s;
-  }
-
-  .btn-close:hover { border-color: var(--gold); color: var(--gold); }
 
   .empty-state {
     text-align: center;
@@ -686,10 +629,7 @@
 
       <!-- LEADERBOARD -->
       <div class="panel">
-        <div class="panel-title" style="justify-content:space-between">
-          <span>🏆 Leaderboard</span>
-          <button onclick="showYearReport()" style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.3);color:var(--gold);border-radius:8px;padding:4px 10px;font-size:11px;cursor:pointer;">ดูรายงาน</button>
-        </div>
+        <div class="panel-title">🏆 Leaderboard</div>
         <div id="leaderboard"></div>
       </div>
     </div>
@@ -699,18 +639,11 @@
 <!-- TOAST -->
 <div class="toast" id="toast">✅ เพิ่มภารกิจแล้ว!</div>
 
-<!-- YEAR REPORT MODAL -->
-<div class="modal-overlay" id="reportModal">
-  <div class="modal">
-    <h2>📊 รายงานประจำปี <span id="reportYear"></span></h2>
-    <div id="reportContent"></div>
-    <button class="btn-close" onclick="closeModal()">ปิด</button>
-  </div>
-</div>
+
 
 <script>
 // ===== DATA =====
-const MEMBERS = [
+let MEMBERS = [
   { id: 1, name: 'Suang',    role: '3D General', emoji: 'S', color: '#f0b429', bg: 'rgba(240,180,41,0.15)' },
   { id: 2, name: 'Pran',     role: '3D General', emoji: 'P', color: '#2dd4bf', bg: 'rgba(45,212,191,0.15)' },
   { id: 3, name: 'Pangpond', role: '3D General', emoji: 'Pa', color: '#a78bfa', bg: 'rgba(167,139,250,0.15)' },
@@ -726,12 +659,30 @@ const N8N_ADD_TASK      = 'https://pb-n8n.planbmedia.co.th/webhook/guild3d/add-t
 const N8N_COMPLETE_TASK = 'https://pb-n8n.planbmedia.co.th/webhook/guild3d/complete-task';
 const N8N_DELETE_TASK   = 'https://pb-n8n.planbmedia.co.th/webhook/guild3d/delete-task';
 const N8N_GET_TASKS     = 'https://pb-n8n.planbmedia.co.th/webhook/guild3d/get-tasks';
-const N8N_GET_MEMBERS     = 'https://pb-n8n.planbmedia.co.th/webhook/get-members';
-
+const N8N_GET_MEMBERS   = 'https://pb-n8n.planbmedia.co.th/webhook/get-members';
 
 let tasks = [];
 let filterMode = 'all';
 let selectedMember = null;
+
+async function loadMembers() {
+  try {
+    const res = await fetch(N8N_GET_MEMBERS);
+    const data = await res.json();
+    if (Array.isArray(data) && data.length > 0) {
+      MEMBERS = data.map(m => ({
+        id: m.id,
+        name: m.name,
+        role: m.role || '3D General',
+        emoji: m.emoji || m.name.substring(0, 2),
+        color: m.color || '#f0b429',
+        bg: m.bg || 'rgba(240,180,41,0.15)',
+      }));
+    }
+  } catch (e) {
+    // fallback to default MEMBERS if fetch fails
+  }
+}
 
 async function loadTasks() {
   try {
@@ -764,15 +715,16 @@ async function loadTasks() {
 }
 
 // ===== INIT =====
-function init() {
+async function init() {
   document.getElementById('yearBadge').textContent = `📅 ${new Date().getFullYear()}`;
-  document.getElementById('reportYear').textContent = new Date().getFullYear();
 
   // Set today as default date
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('taskDate').value = today;
 
-  // Populate assignee select
+  // Load members from webhook, then populate assignee select
+  await loadMembers();
+
   const sel = document.getElementById('taskAssignee');
   MEMBERS.forEach(m => {
     const opt = document.createElement('option');
@@ -981,62 +933,7 @@ function setFilter(mode, btn) {
   renderTasks();
 }
 
-// ===== YEAR REPORT =====
-function showYearReport() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
-  const counts = Array(12).fill(0);
 
-  tasks.filter(t => t.done).forEach(t => {
-    // Try completedAt first, fall back to createdAt
-    const dateStr = t.completedAt || t.createdAt || '';
-    if (!dateStr) return;
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return;
-    // Convert UTC to Bangkok time (UTC+7)
-    const bkkTime = new Date(d.getTime() + 7 * 60 * 60 * 1000);
-    if (bkkTime.getUTCFullYear() === year) counts[bkkTime.getUTCMonth()]++;
-  });
-
-  const max = Math.max(...counts, 1);
-
-  let html = `<div style="margin-bottom:16px;font-size:13px;color:var(--muted)">งานที่เสร็จแต่ละเดือน ปี ${year}</div>`;
-  months.forEach((m, i) => {
-    html += `<div class="month-row">
-      <div class="month-name">${m}</div>
-      <div class="month-bar-wrap"><div class="month-bar" style="width:${(counts[i]/max)*100}%"></div></div>
-      <div class="month-count">${counts[i]}</div>
-    </div>`;
-  });
-
-  // Member summary
-  html += `<div style="margin-top:20px;font-size:13px;color:var(--muted);margin-bottom:12px">สรุปรายคน</div>`;
-  const memberSummary = MEMBERS.map(m => {
-    const done = tasks.filter(t => t.done && t.assigneeId == m.id).length;
-    const exp = tasks.filter(t => t.done && t.assigneeId == m.id).reduce((s,t)=>s+EXP_MAP[t.difficulty],0);
-    return { ...m, done, exp };
-  }).sort((a,b) => b.done - a.done);
-
-  memberSummary.forEach(m => {
-    html += `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
-      <div style="width:32px;height:32px;border-radius:8px;background:${m.bg};color:${m.color};display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Cinzel',serif;font-size:14px">${m.emoji}</div>
-      <div style="flex:1"><div style="font-size:14px">${m.name}</div><div style="font-size:11px;color:var(--muted)">${m.role}</div></div>
-      <div style="text-align:right"><div style="font-size:15px;font-weight:600;color:var(--gold)">${m.done} งาน</div><div style="font-size:11px;color:var(--purple)">${m.exp} EXP</div></div>
-    </div>`;
-  });
-
-  document.getElementById('reportContent').innerHTML = html;
-  document.getElementById('reportModal').classList.add('show');
-}
-
-function closeModal() {
-  document.getElementById('reportModal').classList.remove('show');
-}
-
-document.getElementById('reportModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('reportModal')) closeModal();
-});
 
 // ===== TOAST =====
 let toastTimer;
@@ -1054,4 +951,3 @@ init();
 </script>
 </body>
 </html>
-
