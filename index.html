@@ -853,23 +853,23 @@ function renderTasks() {
     const div = document.createElement('div');
     div.className = 'task-item';
     div.innerHTML = `
-      <div class="task-check ${task.done ? 'done' : ''}" onclick="toggleTask(${task.id})">
+      <div class="task-check ${task.done ? 'done' : ''}" onclick="toggleTask('${task.id}')">
         ${task.done ? '✓' : ''}
       </div>
       <div class="task-body">
         <div class="task-name ${task.done ? 'done' : ''}">${task.name}</div>
         <div class="task-meta">
           <div class="task-assignee">
-            <div class="mini-avatar" style="background:${m.bg};color:${m.color}">${m.emoji}</div>
-            ${m.name}
+            <div class="mini-avatar" style="background:${m ? m.bg : '#333'};color:${m ? m.color : '#fff'}">${m ? m.emoji : '?'}</div>
+            ${m ? m.name : 'Unknown'}
           </div>
           <span class="tag tag-${task.difficulty}">${task.difficulty}</span>
           ${task.date ? `<span>📅 ${task.date}</span>` : ''}
           ${task.note ? `<span>📝 ${task.note.substring(0,30)}${task.note.length>30?'...':''}</span>` : ''}
         </div>
       </div>
-      <div class="task-exp">+${EXP_MAP[task.difficulty]} EXP</div>
-      <button class="task-delete" onclick="deleteTask(${task.id})">✕</button>
+      <div class="task-exp">+${EXP_MAP[task.difficulty] || task.exp} EXP</div>
+      <button class="task-delete" onclick="deleteTask('${task.id}')">✕</button>
     `;
     list.appendChild(div);
   });
@@ -941,7 +941,7 @@ async function addTask() {
 }
 
 async function toggleTask(id) {
-  const t = tasks.find(x => x.id === id);
+  const t = tasks.find(x => String(x.id) === String(id));
   if (!t || t.done) return;
   try {
     await fetch(N8N_COMPLETE_TASK, {
@@ -957,12 +957,15 @@ async function toggleTask(id) {
 }
 
 async function deleteTask(id) {
+  if (!confirm('ลบภารกิจนี้?')) return;
   try {
+    showToast('⏳ กำลังลบ...', '#a78bfa');
     await fetch(N8N_DELETE_TASK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ taskId: id })
+      body: JSON.stringify({ taskId: String(id) })
     });
+    showToast('🗑️ ลบภารกิจแล้ว', '#f87171');
     await loadTasks();
   } catch (e) {
     showToast('⚠️ ลบไม่สำเร็จ ตรวจสอบ n8n', '#f87171');
